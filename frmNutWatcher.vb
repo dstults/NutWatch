@@ -87,9 +87,7 @@
         Else
             ReadData()
         End If
-        If True Then
-            'IO.File.Open(myFile)
-        End If
+        UpdateDisplay()
     End Sub
 
     Public Sub WriteDefaultData()
@@ -138,6 +136,9 @@
 
     Public Sub ReadData()
         Dim textDump() As String = IO.File.ReadAllLines(defaultFile)
+        For Each iStr As String In textDump
+            AddScan(iStr)
+        Next
     End Sub
 
     Public Sub AddScan(inText As String)
@@ -193,6 +194,10 @@
     End Sub
 
     Private Sub TmrSlowUpdate_Tick(sender As Object, e As EventArgs) Handles tmrUpdate.Tick
+        UpdateDisplay()
+    End Sub
+
+    Private Sub UpdateDisplay()
         Static lastString As String
         PerformAllScans()
         Dim newString As String = ScanReport()
@@ -217,30 +222,56 @@
     End Sub
 
     Private Function ScanReport() As String
-        Dim textDump(IpPingScanSet.Count + DnsPingScanSet.Count + IpTcpScanSet.Count + DnsTcpScanSet.Count - 1) As String
-        Dim myLine As Integer = 0
-        For Each NetJob As ClsScanPingIp In IpPingScanSet
-            textDump(myLine) = NetJob.Name & "," & "IP " & NetJob.Ip.ToString & ",PING" & vbNewLine
-            myLine += 1
-        Next
-        For Each NetJob As ClsScanPingDns In DnsPingScanSet
-            textDump(myLine) = NetJob.Name & "," & "DNS " & NetJob.Dns & ",PING" & vbNewLine
-            myLine += 1
-        Next
-        For Each NetJob As ClsScanTcpIp In IpTcpScanSet
-            textDump(myLine) = NetJob.Name & "," & "IP " & NetJob.Ip.ToString & ",TCP " & NetJob.Port & vbNewLine
-            myLine += 1
-        Next
-        For Each NetJob As ClsScanTcpDns In DnsTcpScanSet
-            textDump(myLine) = NetJob.Name & "," & "DNS " & NetJob.Dns & ",TCP " & NetJob.Port & vbNewLine
-            myLine += 1
-        Next
-        Try
-            IO.File.WriteAllLines(defaultFile, textDump)
-        Catch ex As Exception
-            MsgBox("File IO Error: '" & defaultFile & vbNewLine & "Error Message: " & ex.Message)
-            Application.Exit()
-        End Try
+        Dim textDump As String = ""
+        If IpPingScanSet.Count + DnsPingScanSet.Count + IpTcpScanSet.Count + DnsTcpScanSet.Count = 0 Then
+            textDump = "Error: No scans in program memory."
+        Else
+            Dim lotsOfSpaces = "                       "
+            For Each NetJob As ClsScanPingIp In IpPingScanSet
+                textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & ", "
+                textDump &= Strings.Left(NetJob.Ip.ToString & lotsOfSpaces, 23) & ", "
+                textDump &= GetResultTypeString(NetJob.LastResultType)
+                textDump &= vbNewLine
+            Next
+            For Each NetJob As ClsScanPingDns In DnsPingScanSet
+                textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & ", "
+                textDump &= Strings.Left(NetJob.Dns & lotsOfSpaces, 23) & ", "
+                textDump &= GetResultTypeString(NetJob.LastResultType)
+                textDump &= vbNewLine
+            Next
+            For Each NetJob As ClsScanTcpIp In IpTcpScanSet
+                textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & ", "
+                textDump &= Strings.Left(NetJob.Ip.ToString & " : " & NetJob.Port & lotsOfSpaces, 23) & ", "
+                textDump &= GetResultTypeString(NetJob.LastResultType)
+                textDump &= vbNewLine
+            Next
+            For Each NetJob As ClsScanTcpDns In DnsTcpScanSet
+                textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & ", "
+                textDump &= Strings.Left(NetJob.Dns & " : " & NetJob.Port & lotsOfSpaces, 23) & ", "
+                textDump &= GetResultTypeString(NetJob.LastResultType)
+                textDump &= vbNewLine
+            Next
+        End If
+        Return textDump
+    End Function
+
+    Public Function GetResultTypeString(resultNum As Integer) As String
+        Dim result As String = ""
+        Select Case resultNum
+            Case ResultType.nodata
+                result = "No data"
+            Case ResultType.replied
+                result = "Pinged"
+            Case ResultType.noreply
+                result = "No ping reply"
+            Case ResultType.dnsIpChanged
+                result = "DNS ip different than before"
+            Case ResultType.open
+                result = "port open"
+            Case ResultType.closed
+                result = "Port closed"
+        End Select
+        Return Strings.Left(result & "                    ", 20)
     End Function
 
     Private Sub GetPingResult(ByVal sender As Object, ByVal e As System.Net.NetworkInformation.PingCompletedEventArgs)

@@ -35,6 +35,7 @@ Partial Class FrmNutWatcher
         'txtReport
         '
         Me.txtReport.Enabled = False
+        Me.txtReport.Font = New System.Drawing.Font("Consolas", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtReport.Location = New System.Drawing.Point(12, 12)
         Me.txtReport.Multiline = True
         Me.txtReport.Name = "txtReport"
