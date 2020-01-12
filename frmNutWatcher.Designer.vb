@@ -50,7 +50,7 @@ Partial Class FrmNutWatcher
         Me.DataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1, Me.Column2, Me.Column3})
         DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.Black
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Consolas", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Consolas", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
         DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(48, Byte), Integer))
         DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
@@ -60,26 +60,27 @@ Partial Class FrmNutWatcher
         Me.DataGrid.Name = "DataGrid"
         Me.DataGrid.RowHeadersVisible = False
         Me.DataGrid.ScrollBars = System.Windows.Forms.ScrollBars.None
-        Me.DataGrid.Size = New System.Drawing.Size(505, 236)
+        Me.DataGrid.Size = New System.Drawing.Size(357, 236)
         Me.DataGrid.TabIndex = 3
         Me.DataGrid.TabStop = False
         '
         'Column1
         '
+        Me.Column1.FillWeight = 120.0!
         Me.Column1.HeaderText = "Label"
         Me.Column1.Name = "Column1"
         Me.Column1.ReadOnly = True
         '
         'Column2
         '
-        Me.Column2.FillWeight = 140.0!
+        Me.Column2.FillWeight = 130.0!
         Me.Column2.HeaderText = "IP/Domain + Port"
         Me.Column2.Name = "Column2"
         Me.Column2.ReadOnly = True
         '
         'Column3
         '
-        Me.Column3.FillWeight = 120.0!
+        Me.Column3.FillWeight = 60.0!
         Me.Column3.HeaderText = "Status"
         Me.Column3.Name = "Column3"
         Me.Column3.ReadOnly = True
@@ -88,7 +89,7 @@ Partial Class FrmNutWatcher
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(504, 236)
+        Me.ClientSize = New System.Drawing.Size(357, 236)
         Me.Controls.Add(Me.DataGrid)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.MaximizeBox = False

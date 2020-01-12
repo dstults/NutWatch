@@ -12,9 +12,13 @@
     Public bulkScanWorking As Boolean = False
     Public checkIterations As Integer = 0
 
+    Public ReadOnly PingNoProblem As Color = Color.FromArgb(160, 160, 196)
+    Public ReadOnly PingProblem As Color = Color.FromArgb(255, 64, 128)
+    Public ReadOnly TcpNoProblem As Color = Color.FromArgb(160, 196, 160)
+    Public ReadOnly TcpProblem As Color = Color.FromArgb(255, 128, 64)
+
     Public Class ClsScanPingIp
         Public Name As String
-        Public Color As Color = Color.Azure
         Public Ip As Net.IPAddress
         Public RowIndex As Integer = 0
         'Public Interval As Integer = 5
@@ -25,7 +29,6 @@
 
     Public Class ClsScanPingDns
         Public Name As String
-        Public Color As Color = Color.LightBlue
         Public Dns As String
         Public FirstKnownIP As Net.IPAddress
         Public RowIndex As Integer = 0
@@ -37,7 +40,6 @@
 
     Public Class ClsScanTcpIp
         Public Name As String
-        Public Color As Color = Color.Coral
         Public Ip As Net.IPAddress
         Public Port As Integer
         Public RowIndex As Integer = 0
@@ -57,7 +59,6 @@
 
     Public Class ClsScanTcpDns
         Public Name As String
-        Public Color As Color = Color.Pink
         Public Dns As String
         Public FirstKnownIP As Net.IPAddress
         Public Port As Integer
@@ -172,7 +173,7 @@
             Dim myScan As New ClsScanPingIp
             IpPingScanSet.Add(myScan)
             myScan.RowIndex = currentRow
-            rowFontColor = myScan.Color
+            rowFontColor = PingNoProblem
 
             myScan.Name = setName
             If Net.IPAddress.TryParse(parseTargetData(1), myScan.Ip) Then
@@ -186,7 +187,7 @@
             Dim myScan As New ClsScanTcpIp
             IpTcpScanSet.Add(myScan)
             myScan.RowIndex = currentRow
-            rowFontColor = myScan.Color
+            rowFontColor = TcpNoProblem
 
             myScan.Name = setName
             myScan.Port = CInt(parseScanData(1))
@@ -201,7 +202,7 @@
             Dim myScan As New ClsScanPingDns
             DnsPingScanSet.Add(myScan)
             myScan.RowIndex = currentRow
-            rowFontColor = myScan.Color
+            rowFontColor = PingNoProblem
 
             myScan.Name = setName
             myScan.Dns = parseTargetData(1)
@@ -212,7 +213,7 @@
             Dim myScan As New ClsScanTcpDns
             DnsTcpScanSet.Add(myScan)
             myScan.RowIndex = currentRow
-            rowFontColor = myScan.Color
+            rowFontColor = TcpNoProblem
 
             myScan.Name = setName
             myScan.Dns = parseTargetData(1)
@@ -265,16 +266,10 @@
                 bulkScanWorking = True
                 tmrUpdate.Interval = 10
                 checkIterations = 0
+                For iRow As Integer = 0 To DataGrid.Rows.Count - 1
+                    DataGrid.Rows(iRow).DefaultCellStyle.ForeColor = Color.White
+                Next
         End Select
-
-        'Static lastString As String
-        'Dim newString As String = ScanReport()
-
-        'If lastString <> newString Then
-        '    lastString = newString
-        'Else
-        '    ' Do nothing.
-        'End If
     End Sub
 
     Private Sub StartAllScans()
@@ -366,12 +361,14 @@
         For Each tcpJob As ClsScanTcpIp In IpTcpScanSet
             If tcpJob.Message = "" Then
                 If tcpJob.TcpClient.Connected Then
-                    tcpJob.Message = "Port open ( < " & (1 + checkIterations) * tmrUpdate.Interval & " ms )"
+                    tcpJob.Message = "< " & (1 + checkIterations) * tmrUpdate.Interval & " ms"
                     DataGrid.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
+                    DataGrid.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpNoProblem
                     tcpJob.TcpReset()
                 ElseIf checkIterations > myTimeoutMs / tmrUpdate.Interval Then
-                    tcpJob.Message = "Port closed ( > " & (-1 + checkIterations) * tmrUpdate.Interval & " ms )"
+                    tcpJob.Message = "closed"
                     DataGrid.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
+                    DataGrid.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpProblem
                     tcpJob.TcpReset()
                 End If
             End If
@@ -379,12 +376,14 @@
         For Each tcpJob As ClsScanTcpDns In DnsTcpScanSet
             If tcpJob.Message = "" Then
                 If tcpJob.TcpClient.Connected Then
-                    tcpJob.Message = "Port open ( < " & (1 + checkIterations) * tmrUpdate.Interval & " ms )"
+                    tcpJob.Message = "< " & (1 + checkIterations) * tmrUpdate.Interval & " ms"
                     DataGrid.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
+                    DataGrid.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpNoProblem
                     tcpJob.TcpReset()
                 ElseIf checkIterations > myTimeoutMs / tmrUpdate.Interval Then
-                    tcpJob.Message = "Port closed ( > " & (-1 + checkIterations) * tmrUpdate.Interval & " ms )"
+                    tcpJob.Message = "closed"
                     DataGrid.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
+                    DataGrid.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpProblem
                     tcpJob.TcpReset()
                 End If
             End If
@@ -404,11 +403,11 @@
                     Case Net.NetworkInformation.IPStatus.Success
                         pingJob.Message = e.Reply.RoundtripTime & " ms"
                         DataGrid.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
-                        DataGrid.Rows(pingJob.RowIndex).Cells(2).Style.BackColor = Color.Black
+                        DataGrid.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingNoProblem
                     Case Else
-                        pingJob.Message = "> " & e.Reply.RoundtripTime & " ms"
+                        pingJob.Message = "no reply"
                         DataGrid.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
-                        DataGrid.Rows(pingJob.RowIndex).Cells(2).Style.BackColor = Color.DarkRed
+                        DataGrid.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingProblem
                 End Select
             End If
         Next
@@ -418,11 +417,11 @@
                     Case Net.NetworkInformation.IPStatus.Success
                         pingJob.Message = e.Reply.RoundtripTime & " ms"
                         DataGrid.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
-                        DataGrid.Rows(pingJob.RowIndex).Cells(2).Style.BackColor = Color.Black
+                        DataGrid.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingNoProblem
                     Case Else
-                        pingJob.Message = "> " & e.Reply.RoundtripTime & " ms"
+                        pingJob.Message = "no reply"
                         DataGrid.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
-                        DataGrid.Rows(pingJob.RowIndex).Cells(2).Style.BackColor = Color.DarkRed
+                        DataGrid.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingProblem
                 End Select
             End If
         Next
@@ -433,6 +432,12 @@
             ' Clean up unmanaged resources
             '.Dispose()
         End With
+    End Sub
+
+    Private Sub DataGrid_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles DataGrid.MouseDoubleClick
+        If Not bulkScanWorking Then
+            UpdateDisplay()
+        End If
     End Sub
 
     '===================================================================================================================
