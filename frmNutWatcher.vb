@@ -6,18 +6,20 @@
 
     Public programFullNameAndVersion = "NutWatcher v0.80"
     Public programMajorVersionReleaseDate = "2020-01-11"
-    Public myTimeout = 1000 ' ms
+    Public myLongIntervalSecs = 30 ' s
+    Public myTimeoutMs = 2000 ' ms
     Public defaultFile As String = "config.csv"
+    Public bulkScanWorking As Boolean = False
+    Public checkIterations As Integer = 0
 
     Public Class ClsScanPingIp
         Public Name As String
         Public Color As Color = Color.Azure
         Public Ip As Net.IPAddress
-        Public Interval As Integer = 5
-        Public NextScanTime As DateTime
-        Public PingTest As Net.NetworkInformation.Ping
-        Public LastResult As Integer
-        Public LastResultType As Integer
+        'Public Interval As Integer = 5
+        'Public NextScanTime As DateTime
+        Public PingTest As New Net.NetworkInformation.Ping
+        Public Message As String
     End Class
 
     Public Class ClsScanPingDns
@@ -25,11 +27,10 @@
         Public Color As Color = Color.LightBlue
         Public Dns As String
         Public FirstKnownIP As Net.IPAddress
-        Public Interval As Integer = 10
-        Public NextScanTime As DateTime
-        Public PingTest As Net.NetworkInformation.Ping
-        Public LastResult As Integer
-        Public LastResultType As Integer
+        'Public Interval As Integer = 10
+        'Public NextScanTime As DateTime
+        Public PingTest As New Net.NetworkInformation.Ping
+        Public Message As String
     End Class
 
     Public Class ClsScanTcpIp
@@ -37,11 +38,18 @@
         Public Color As Color = Color.Coral
         Public Ip As Net.IPAddress
         Public Port As Integer
-        Public Interval As Integer = 5
-        Public NextScanTime As DateTime
-        Public TcpClient As Net.Sockets.TcpClient
-        Public LastResult As Integer
-        Public LastResultType As Integer
+        'Public Interval As Integer = 5
+        'Public NextScanTime As DateTime
+        Public TcpClient As New Net.Sockets.TcpClient
+        Public Message As String
+        Public Sub TcpReset()
+            TcpClient.Client.Close()
+            TcpClient.Client.Dispose()
+            TcpClient.Close()
+            TcpClient.Dispose()
+            TcpClient = New Net.Sockets.TcpClient
+        End Sub
+
     End Class
 
     Public Class ClsScanTcpDns
@@ -50,21 +58,20 @@
         Public Dns As String
         Public FirstKnownIP As Net.IPAddress
         Public Port As Integer
-        Public Interval As Integer = 10
-        Public NextScanTime As DateTime
-        Public TcpClient As Net.Sockets.TcpClient
-        Public LastResult As Integer
-        Public LastResultType As Integer
-    End Class
+        'Public Interval As Integer = 10
+        'Public NextScanTime As DateTime
+        Public TcpClient As New Net.Sockets.TcpClient
+        Public Message As String
+        Public Sub TcpReset()
+            TcpClient.GetStream.Close()
+            TcpClient.Client.Close()
+            TcpClient.Client.Dispose()
+            TcpClient.Close()
+            TcpClient.Dispose()
+            TcpClient = New Net.Sockets.TcpClient
+        End Sub
 
-    Public Enum ResultType
-        nodata
-        replied
-        open
-        noreply
-        closed
-        dnsIpChanged
-    End Enum
+    End Class
 
     Public IpPingScanSet As New HashSet(Of ClsScanPingIp)
     Public DnsPingScanSet As New HashSet(Of ClsScanPingDns)
@@ -138,6 +145,7 @@
         Dim textDump() As String = IO.File.ReadAllLines(defaultFile)
         For Each iStr As String In textDump
             AddScan(iStr)
+            DataGrid.Rows.Add()
         Next
     End Sub
 
@@ -156,7 +164,7 @@
             Else
                 MsgBox("Error, invalid IPv4: " & parseTargetData(1))
             End If
-            myScan.NextScanTime = DateTime.Now.AddSeconds(myScan.Interval)
+            'myScan.NextScanTime = DateTime.Now.AddSeconds(myScan.Interval)
 
         ElseIf parseTargetData(0) = "IP" And parseScanData(0) = "TCP" Then
             Dim myScan As New ClsScanTcpIp
@@ -170,7 +178,7 @@
                 MsgBox("Error, invalid IPv4: " & parseTargetData(1))
             End If
             myScan.Port = CInt(parseScanData(1))
-            myScan.NextScanTime = DateTime.Now.AddSeconds(myScan.Interval)
+            'myScan.NextScanTime = DateTime.Now.AddSeconds(myScan.Interval)
 
         ElseIf parseTargetData(0) = "DNS" And parseScanData(0) = "PING" Then
             Dim myScan As New ClsScanPingDns
@@ -178,7 +186,7 @@
 
             myScan.Name = setName
             myScan.Dns = parseTargetData(1)
-            myScan.NextScanTime = DateTime.Now.AddSeconds(myScan.Interval)
+            'myScan.NextScanTime = DateTime.Now.AddSeconds(myScan.Interval)
 
         ElseIf parseTargetData(0) = "DNS" And parseScanData(0) = "TCP" Then
             Dim myScan As New ClsScanTcpDns
@@ -187,103 +195,185 @@
             myScan.Name = setName
             myScan.Dns = parseTargetData(1)
             myScan.Port = CInt(parseScanData(1))
-            myScan.NextScanTime = DateTime.Now.AddSeconds(myScan.Interval)
+            'myScan.NextScanTime = DateTime.Now.AddSeconds(myScan.Interval)
 
         End If
 
     End Sub
 
-    Private Sub TmrSlowUpdate_Tick(sender As Object, e As EventArgs) Handles tmrUpdate.Tick
+    Private Sub TmrUpdate_Tick(sender As Object, e As EventArgs) Handles tmrUpdate.Tick
         UpdateDisplay()
     End Sub
 
-    Private Sub UpdateDisplay()
-        Static lastString As String
-        PerformAllScans()
-        Dim newString As String = ScanReport()
+    Public Function AllJobsDone()
+        Dim result As Boolean = True
+        For Each netJob As ClsScanPingIp In IpPingScanSet
+            If netJob.Message = "" Then result = False
+        Next
+        For Each netJob As ClsScanPingDns In DnsPingScanSet
+            If netJob.Message = "" Then result = False
+        Next
+        For Each netJob As ClsScanTcpIp In IpTcpScanSet
+            If netJob.Message = "" Then result = False
+        Next
+        For Each netJob As ClsScanTcpDns In DnsTcpScanSet
+            If netJob.Message = "" Then result = False
+        Next
+        Return result
+    End Function
 
-        If lastString <> newString Then
-            txtReport.Text = newString
-            lastString = newString
-        Else
-            ' Do nothing.
-        End If
+    Private Sub UpdateDisplay()
+        Select Case BulkScanWorking
+            Case True
+                If AllJobsDone() Then
+                    BulkScanWorking = False
+                    tmrUpdate.Interval = myLongIntervalSecs * 1000
+                Else
+                    checkIterations += 1
+                    ' Pings have their own event trigger.
+                    CheckForNewOpenTcpPorts()
+                End If
+            Case False
+                tmrUpdate.Enabled = True
+                StartAllScans()
+                BulkScanWorking = True
+                tmrUpdate.Interval = 10
+                checkIterations = 0
+        End Select
+
+        Static lastString As String
+        'Dim newString As String = ScanReport()
+
+        'If lastString <> newString Then
+        '    lastString = newString
+        'Else
+        '    ' Do nothing.
+        'End If
     End Sub
 
-    Private Sub PerformAllScans()
+    Private Sub StartAllScans()
         For Each pingJob As ClsScanPingIp In IpPingScanSet
             Try
-                pingJob.PingTest.SendAsync(pingJob.Ip.ToString, myTimeout, pingJob)
+                pingJob.PingTest.SendAsync(pingJob.Ip.ToString, myTimeoutMs, pingJob)
                 AddHandler pingJob.PingTest.PingCompleted, AddressOf GetPingResult
+                pingJob.Message = ""
             Catch ex As Exception
-                'LogError(ex)
+                LogError(pingJob, ex)
+            End Try
+        Next
+        For Each pingJob As ClsScanPingDns In DnsPingScanSet
+            Dim myIp As Net.IPAddress
+            Try
+                myIp = Net.Dns.GetHostEntry(pingJob.Dns).AddressList.First
+                Try
+                    pingJob.PingTest.SendAsync(myIp, myTimeoutMs, pingJob)
+                    AddHandler pingJob.PingTest.PingCompleted, AddressOf GetPingResult
+                    pingJob.Message = ""
+                Catch ex As Exception
+                    LogError(pingJob, ex)
+                End Try
+            Catch ex As Exception
+                LogError(pingJob, ex)
+            End Try
+        Next
+        For Each tcpJob As ClsScanTcpIp In IpTcpScanSet
+            Try
+                tcpJob.TcpClient.ConnectAsync(tcpJob.Ip, tcpJob.Port)
+                tcpJob.Message = ""
+            Catch ex As Exception
+                LogError(tcpJob, ex)
+            End Try
+        Next
+        For Each tcpJob As ClsScanTcpDns In DnsTcpScanSet
+            Dim myIp As Net.IPAddress
+            Try
+                myIp = Net.Dns.GetHostEntry(tcpJob.Dns).AddressList.First
+                Try
+                    tcpJob.TcpClient.ConnectAsync(myIp, tcpJob.Port)
+                    tcpJob.Message = ""
+                Catch ex As Exception
+                    LogError(tcpJob, ex)
+                End Try
+            Catch ex As Exception
+                LogError(tcpJob, ex)
             End Try
         Next
     End Sub
 
-    Private Function ScanReport() As String
-        Dim textDump As String = ""
-        If IpPingScanSet.Count + DnsPingScanSet.Count + IpTcpScanSet.Count + DnsTcpScanSet.Count = 0 Then
-            textDump = "Error: No scans in program memory."
-        Else
-            Dim lotsOfSpaces = "                       "
-            For Each NetJob As ClsScanPingIp In IpPingScanSet
-                textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & ", "
-                textDump &= Strings.Left(NetJob.Ip.ToString & lotsOfSpaces, 23) & ", "
-                textDump &= GetResultTypeString(NetJob.LastResultType)
-                textDump &= vbNewLine
-            Next
-            For Each NetJob As ClsScanPingDns In DnsPingScanSet
-                textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & ", "
-                textDump &= Strings.Left(NetJob.Dns & lotsOfSpaces, 23) & ", "
-                textDump &= GetResultTypeString(NetJob.LastResultType)
-                textDump &= vbNewLine
-            Next
-            For Each NetJob As ClsScanTcpIp In IpTcpScanSet
-                textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & ", "
-                textDump &= Strings.Left(NetJob.Ip.ToString & " : " & NetJob.Port & lotsOfSpaces, 23) & ", "
-                textDump &= GetResultTypeString(NetJob.LastResultType)
-                textDump &= vbNewLine
-            Next
-            For Each NetJob As ClsScanTcpDns In DnsTcpScanSet
-                textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & ", "
-                textDump &= Strings.Left(NetJob.Dns & " : " & NetJob.Port & lotsOfSpaces, 23) & ", "
-                textDump &= GetResultTypeString(NetJob.LastResultType)
-                textDump &= vbNewLine
-            Next
-        End If
-        Return textDump
-    End Function
+    'Private Function ScanReport() As String
+    '    Dim textDump As String = ""
+    '    If IpPingScanSet.Count + DnsPingScanSet.Count + IpTcpScanSet.Count + DnsTcpScanSet.Count = 0 Then
+    '        textDump = "Error: No scans in program memory."
+    '    Else
+    '        Dim lotsOfSpaces = "                    "
+    '        For Each NetJob As ClsScanPingIp In IpPingScanSet
+    '            textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & "    "
+    '            textDump &= Strings.Left(NetJob.Ip.ToString & lotsOfSpaces, 23) & "    "
+    '            textDump &= Strings.Left(NetJob.Message & lotsOfSpaces & lotsOfSpaces, 40)
+    '            textDump &= vbNewLine
+    '        Next
+    '        For Each NetJob As ClsScanPingDns In DnsPingScanSet
+    '            textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & "    "
+    '            textDump &= Strings.Left(NetJob.Dns & lotsOfSpaces, 23) & "    "
+    '            textDump &= Strings.Left(NetJob.Message & lotsOfSpaces & lotsOfSpaces, 40)
+    '            textDump &= vbNewLine
+    '        Next
+    '        For Each NetJob As ClsScanTcpIp In IpTcpScanSet
+    '            textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & "    "
+    '            textDump &= Strings.Left(NetJob.Ip.ToString & lotsOfSpaces, 15) & " : "
+    '            textDump &= Strings.Left(NetJob.Port & "     ", 5) & "    "
+    '            textDump &= Strings.Left(NetJob.Message & lotsOfSpaces & lotsOfSpaces, 40)
+    '            textDump &= vbNewLine
+    '        Next
+    '        For Each NetJob As ClsScanTcpDns In DnsTcpScanSet
+    '            textDump &= Strings.Left(NetJob.Name & lotsOfSpaces, 20) & "    "
+    '            textDump &= Strings.Left(NetJob.Dns & lotsOfSpaces, 15) & " : "
+    '            textDump &= Strings.Left(NetJob.Port & "     ", 5) & "    "
+    '            textDump &= Strings.Left(NetJob.Message & lotsOfSpaces & lotsOfSpaces, 40)
+    '            textDump &= vbNewLine
+    '        Next
+    '    End If
+    '    Return textDump
+    'End Function
 
-    Public Function GetResultTypeString(resultNum As Integer) As String
-        Dim result As String = ""
-        Select Case resultNum
-            Case ResultType.nodata
-                result = "No data"
-            Case ResultType.replied
-                result = "Pinged"
-            Case ResultType.noreply
-                result = "No ping reply"
-            Case ResultType.dnsIpChanged
-                result = "DNS ip different than before"
-            Case ResultType.open
-                result = "port open"
-            Case ResultType.closed
-                result = "Port closed"
-        End Select
-        Return Strings.Left(result & "                    ", 20)
-    End Function
+    Private Sub CheckForNewOpenTcpPorts()
+        For Each tcpJob As ClsScanTcpIp In IpTcpScanSet
+            If tcpJob.Message = "" Then
+                If tcpJob.TcpClient.Connected Then
+                    tcpJob.Message = "Port open ( < " & (1 + checkIterations) * tmrUpdate.Interval & " ms )"
+                    tcpJob.TcpReset()
+                ElseIf checkIterations > myTimeoutMs / tmrUpdate.Interval Then
+                    tcpJob.Message = "Port closed ( > " & (-1 + checkIterations) * tmrUpdate.Interval & " ms )"
+                    tcpJob.TcpReset()
+                End If
+            End If
+        Next
+        For Each tcpJob As ClsScanTcpDns In DnsTcpScanSet
+            If tcpJob.Message = "" Then
+                If tcpJob.TcpClient.Connected Then
+                    tcpJob.Message = "Port open ( < " & (1 + checkIterations) * tmrUpdate.Interval & " ms )"
+                    tcpJob.TcpReset()
+                ElseIf checkIterations > myTimeoutMs / tmrUpdate.Interval Then
+                    tcpJob.Message = "Port closed ( > " & (-1 + checkIterations) * tmrUpdate.Interval & " ms )"
+                    tcpJob.TcpReset()
+                End If
+            End If
+        Next
+    End Sub
+
+    Public Sub LogError(netJob As Object, ex As Exception)
+        netJob.Message = ex.Message
+    End Sub
 
     Private Sub GetPingResult(ByVal sender As Object, ByVal e As System.Net.NetworkInformation.PingCompletedEventArgs)
         ' e.UserState is the UserToken passed to the pingAsync, we will use it to find the matching ping job
         For Each pingJob As ClsScanPingIp In IpPingScanSet
             If pingJob Is e.UserState Then
-                pingJob.LastResult = e.Reply.RoundtripTime
                 Select Case e.Reply.Status
                     Case Net.NetworkInformation.IPStatus.Success
-                        pingJob.LastResultType = ResultType.replied
+                        pingJob.Message = e.Reply.RoundtripTime & " ms"
                     Case Else
-                        pingJob.LastResultType = ResultType.noreply
+                        pingJob.Message = "> " & e.Reply.RoundtripTime & " ms"
                 End Select
             End If
         Next
@@ -297,7 +387,7 @@
             ' Remove handler because it is no longer needed
             RemoveHandler .PingCompleted, AddressOf GetPingResult
             ' Clean up unmanaged resources
-            .Dispose()
+            '.Dispose()
         End With
     End Sub
 

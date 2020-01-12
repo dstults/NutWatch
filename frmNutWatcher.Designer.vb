@@ -23,41 +23,82 @@ Partial Class FrmNutWatcher
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.tmrUpdate = New System.Windows.Forms.Timer(Me.components)
-        Me.txtReport = New System.Windows.Forms.TextBox()
+        Me.DataGrid = New System.Windows.Forms.DataGridView()
+        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        CType(Me.DataGrid, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'tmrUpdate
         '
-        Me.tmrUpdate.Enabled = True
         Me.tmrUpdate.Interval = 10000
         '
-        'txtReport
+        'DataGrid
         '
-        Me.txtReport.Enabled = False
-        Me.txtReport.Font = New System.Drawing.Font("Consolas", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtReport.Location = New System.Drawing.Point(12, 12)
-        Me.txtReport.Multiline = True
-        Me.txtReport.Name = "txtReport"
-        Me.txtReport.ReadOnly = True
-        Me.txtReport.Size = New System.Drawing.Size(480, 209)
-        Me.txtReport.TabIndex = 2
-        Me.txtReport.WordWrap = False
+        Me.DataGrid.AllowUserToAddRows = False
+        Me.DataGrid.AllowUserToDeleteRows = False
+        Me.DataGrid.AllowUserToResizeColumns = False
+        Me.DataGrid.AllowUserToResizeRows = False
+        Me.DataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGrid.ColumnHeadersVisible = False
+        Me.DataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1, Me.Column2, Me.Column3})
+        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle1.BackColor = System.Drawing.Color.Black
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Consolas", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DataGrid.DefaultCellStyle = DataGridViewCellStyle1
+        Me.DataGrid.Location = New System.Drawing.Point(0, 0)
+        Me.DataGrid.Name = "DataGrid"
+        Me.DataGrid.RowHeadersVisible = False
+        Me.DataGrid.Size = New System.Drawing.Size(505, 236)
+        Me.DataGrid.TabIndex = 3
+        '
+        'Column1
+        '
+        Me.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+        Me.Column1.HeaderText = "Label"
+        Me.Column1.Name = "Column1"
+        Me.Column1.ReadOnly = True
+        '
+        'Column2
+        '
+        Me.Column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+        Me.Column2.FillWeight = 140.0!
+        Me.Column2.HeaderText = "IP/Domain + Port"
+        Me.Column2.Name = "Column2"
+        Me.Column2.ReadOnly = True
+        '
+        'Column3
+        '
+        Me.Column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+        Me.Column3.FillWeight = 120.0!
+        Me.Column3.HeaderText = "Status"
+        Me.Column3.Name = "Column3"
+        Me.Column3.ReadOnly = True
         '
         'FrmNutWatcher
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(504, 233)
-        Me.Controls.Add(Me.txtReport)
+        Me.Controls.Add(Me.DataGrid)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.MaximizeBox = False
         Me.Name = "FrmNutWatcher"
         Me.Text = "Darren's NutWatcher"
+        CType(Me.DataGrid, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
     Friend WithEvents tmrUpdate As Timer
-    Friend WithEvents txtReport As TextBox
+    Friend WithEvents DataGrid As DataGridView
+    Friend WithEvents Column1 As DataGridViewTextBoxColumn
+    Friend WithEvents Column2 As DataGridViewTextBoxColumn
+    Friend WithEvents Column3 As DataGridViewTextBoxColumn
 End Class
