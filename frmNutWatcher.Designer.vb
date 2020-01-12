@@ -42,6 +42,9 @@ Partial Class FrmNutWatcher
         Me.DataGrid.AllowUserToDeleteRows = False
         Me.DataGrid.AllowUserToResizeColumns = False
         Me.DataGrid.AllowUserToResizeRows = False
+        Me.DataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+        Me.DataGrid.BackgroundColor = System.Drawing.Color.Black
+        Me.DataGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
         Me.DataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGrid.ColumnHeadersVisible = False
         Me.DataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1, Me.Column2, Me.Column3})
@@ -49,26 +52,26 @@ Partial Class FrmNutWatcher
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.Black
         DataGridViewCellStyle1.Font = New System.Drawing.Font("Consolas", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         DataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(48, Byte), Integer))
         DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.DataGrid.DefaultCellStyle = DataGridViewCellStyle1
         Me.DataGrid.Location = New System.Drawing.Point(0, 0)
         Me.DataGrid.Name = "DataGrid"
         Me.DataGrid.RowHeadersVisible = False
+        Me.DataGrid.ScrollBars = System.Windows.Forms.ScrollBars.None
         Me.DataGrid.Size = New System.Drawing.Size(505, 236)
         Me.DataGrid.TabIndex = 3
+        Me.DataGrid.TabStop = False
         '
         'Column1
         '
-        Me.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
         Me.Column1.HeaderText = "Label"
         Me.Column1.Name = "Column1"
         Me.Column1.ReadOnly = True
         '
         'Column2
         '
-        Me.Column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
         Me.Column2.FillWeight = 140.0!
         Me.Column2.HeaderText = "IP/Domain + Port"
         Me.Column2.Name = "Column2"
@@ -76,7 +79,6 @@ Partial Class FrmNutWatcher
         '
         'Column3
         '
-        Me.Column3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
         Me.Column3.FillWeight = 120.0!
         Me.Column3.HeaderText = "Status"
         Me.Column3.Name = "Column3"
@@ -86,7 +88,7 @@ Partial Class FrmNutWatcher
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(504, 233)
+        Me.ClientSize = New System.Drawing.Size(504, 236)
         Me.Controls.Add(Me.DataGrid)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.MaximizeBox = False
