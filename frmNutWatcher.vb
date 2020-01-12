@@ -112,9 +112,9 @@
         textDump(3) = "  - SSH,IP 192.168.1.2,TCP 22"
         textDump(4) = "  - DNS,IP 192.168.1.2,TCP 53"
         textDump(5) = "SMB Server,IP 192.168.1.3,PING"
-        textDump(6) = "  - SMB-NETBIOS,IP: 192.168.1.89,TCP 139"
-        textDump(7) = "  - SMB-IP,IP 192.168.1.89,TCP 445"
-        textDump(8) = "  - RDP,IP 192.168.1.89,TCP 3389"
+        textDump(6) = "  - SMB-NETBIOS,IP 192.168.1.3,TCP 139"
+        textDump(7) = "  - SMB-IP,IP 192.168.1.3,TCP 445"
+        textDump(8) = "  - RDP,IP 192.168.1.3,TCP 3389"
         textDump(9) = "Remote Website,DNS google.com,TCP 80"
         IO.File.WriteAllLines(defaultFile, textDump)
     End Sub
