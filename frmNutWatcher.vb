@@ -150,11 +150,11 @@
         Dim textDump() As String = IO.File.ReadAllLines(defaultFile)
         Dim iInt As Integer
         Me.Height = 43 ' 32 + 11
-        DataGrid.Height = 11 ' 0 + 11
+        DgvNetwork.Height = 11 ' 0 + 11
         For Each iStr As String In textDump
             AddScan(iStr)
             Me.Height += 22
-            DataGrid.Height += 22
+            DgvNetwork.Height += 22
         Next
     End Sub
 
@@ -164,11 +164,11 @@
         Dim parseTargetData() As String = Split(setTargetData, " ")
         Dim parseScanData() As String = Split(setScanData, " ")
 
-        DataGrid.Rows.Add()
-        Dim currentRow As Integer = DataGrid.Rows.Count - 1
+        DgvNetwork.Rows.Add()
+        Dim currentRow As Integer = DgvNetwork.Rows.Count - 1
         Dim column2text = ""
         Dim rowFontColor As Color = Nothing
-        DataGrid.Rows(currentRow).Cells(0).Value = Strings.Left(setName, 20)
+        DgvNetwork.Rows(currentRow).Cells(0).Value = Strings.Left(setName, 20)
         If parseTargetData(0) = "IP" And parseScanData(0) = "PING" Then
             Dim myScan As New ClsScanPingIp
             IpPingScanSet.Add(myScan)
@@ -223,8 +223,8 @@
 
         End If
 
-        DataGrid.Rows(currentRow).DefaultCellStyle.ForeColor = rowFontColor
-        DataGrid.Rows(currentRow).Cells(1).Value = column2text
+        DgvNetwork.Rows(currentRow).DefaultCellStyle.ForeColor = rowFontColor
+        DgvNetwork.Rows(currentRow).Cells(1).Value = column2text
 
     End Sub
 
@@ -266,8 +266,8 @@
                 bulkScanWorking = True
                 tmrUpdate.Interval = 10
                 checkIterations = 0
-                For iRow As Integer = 0 To DataGrid.Rows.Count - 1
-                    DataGrid.Rows(iRow).DefaultCellStyle.ForeColor = Color.White
+                For iRow As Integer = 0 To DgvNetwork.Rows.Count - 1
+                    DgvNetwork.Rows(iRow).DefaultCellStyle.ForeColor = Color.White
                 Next
         End Select
     End Sub
@@ -362,13 +362,13 @@
             If tcpJob.Message = "" Then
                 If tcpJob.TcpClient.Connected Then
                     tcpJob.Message = "< " & (1 + checkIterations) * tmrUpdate.Interval & " ms"
-                    DataGrid.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
-                    DataGrid.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpNoProblem
+                    DgvNetwork.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
+                    DgvNetwork.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpNoProblem
                     tcpJob.TcpReset()
                 ElseIf checkIterations > myTimeoutMs / tmrUpdate.Interval Then
                     tcpJob.Message = "closed"
-                    DataGrid.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
-                    DataGrid.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpProblem
+                    DgvNetwork.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
+                    DgvNetwork.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpProblem
                     tcpJob.TcpReset()
                 End If
             End If
@@ -377,13 +377,13 @@
             If tcpJob.Message = "" Then
                 If tcpJob.TcpClient.Connected Then
                     tcpJob.Message = "< " & (1 + checkIterations) * tmrUpdate.Interval & " ms"
-                    DataGrid.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
-                    DataGrid.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpNoProblem
+                    DgvNetwork.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
+                    DgvNetwork.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpNoProblem
                     tcpJob.TcpReset()
                 ElseIf checkIterations > myTimeoutMs / tmrUpdate.Interval Then
                     tcpJob.Message = "closed"
-                    DataGrid.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
-                    DataGrid.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpProblem
+                    DgvNetwork.Rows(tcpJob.RowIndex).Cells(2).Value = tcpJob.Message
+                    DgvNetwork.Rows(tcpJob.RowIndex).DefaultCellStyle.ForeColor = TcpProblem
                     tcpJob.TcpReset()
                 End If
             End If
@@ -392,7 +392,7 @@
 
     Public Sub LogError(netJob As Object, ex As Exception)
         netJob.Message = ex.Message
-        DataGrid.Rows(netJob.RowIndex).Cells(2).Value = ex.Message
+        DgvNetwork.Rows(netJob.RowIndex).Cells(2).Value = ex.Message
     End Sub
 
     Private Sub GetPingResult(ByVal sender As Object, ByVal e As System.Net.NetworkInformation.PingCompletedEventArgs)
@@ -402,12 +402,12 @@
                 Select Case e.Reply.Status
                     Case Net.NetworkInformation.IPStatus.Success
                         pingJob.Message = e.Reply.RoundtripTime & " ms"
-                        DataGrid.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
-                        DataGrid.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingNoProblem
+                        DgvNetwork.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
+                        DgvNetwork.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingNoProblem
                     Case Else
                         pingJob.Message = "no reply"
-                        DataGrid.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
-                        DataGrid.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingProblem
+                        DgvNetwork.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
+                        DgvNetwork.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingProblem
                 End Select
             End If
         Next
@@ -416,12 +416,12 @@
                 Select Case e.Reply.Status
                     Case Net.NetworkInformation.IPStatus.Success
                         pingJob.Message = e.Reply.RoundtripTime & " ms"
-                        DataGrid.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
-                        DataGrid.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingNoProblem
+                        DgvNetwork.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
+                        DgvNetwork.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingNoProblem
                     Case Else
                         pingJob.Message = "no reply"
-                        DataGrid.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
-                        DataGrid.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingProblem
+                        DgvNetwork.Rows(pingJob.RowIndex).Cells(2).Value = pingJob.Message
+                        DgvNetwork.Rows(pingJob.RowIndex).DefaultCellStyle.ForeColor = PingProblem
                 End Select
             End If
         Next
@@ -434,7 +434,7 @@
         End With
     End Sub
 
-    Private Sub DataGrid_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles DataGrid.MouseDoubleClick
+    Private Sub DgvNetwork_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles DgvNetwork.MouseDoubleClick
         If Not bulkScanWorking Then
             UpdateDisplay()
         End If

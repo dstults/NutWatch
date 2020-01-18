@@ -25,29 +25,29 @@ Partial Class FrmNutWatcher
         Me.components = New System.ComponentModel.Container()
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.tmrUpdate = New System.Windows.Forms.Timer(Me.components)
-        Me.DataGrid = New System.Windows.Forms.DataGridView()
+        Me.DgvNetwork = New System.Windows.Forms.DataGridView()
         Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        CType(Me.DataGrid, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DgvNetwork, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'tmrUpdate
         '
         Me.tmrUpdate.Interval = 10000
         '
-        'DataGrid
+        'DgvNetwork
         '
-        Me.DataGrid.AllowUserToAddRows = False
-        Me.DataGrid.AllowUserToDeleteRows = False
-        Me.DataGrid.AllowUserToResizeColumns = False
-        Me.DataGrid.AllowUserToResizeRows = False
-        Me.DataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
-        Me.DataGrid.BackgroundColor = System.Drawing.Color.Black
-        Me.DataGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
-        Me.DataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGrid.ColumnHeadersVisible = False
-        Me.DataGrid.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1, Me.Column2, Me.Column3})
+        Me.DgvNetwork.AllowUserToAddRows = False
+        Me.DgvNetwork.AllowUserToDeleteRows = False
+        Me.DgvNetwork.AllowUserToResizeColumns = False
+        Me.DgvNetwork.AllowUserToResizeRows = False
+        Me.DgvNetwork.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
+        Me.DgvNetwork.BackgroundColor = System.Drawing.Color.Black
+        Me.DgvNetwork.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None
+        Me.DgvNetwork.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DgvNetwork.ColumnHeadersVisible = False
+        Me.DgvNetwork.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1, Me.Column2, Me.Column3})
         DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.Black
         DataGridViewCellStyle1.Font = New System.Drawing.Font("Consolas", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -55,14 +55,14 @@ Partial Class FrmNutWatcher
         DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(48, Byte), Integer))
         DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DataGrid.DefaultCellStyle = DataGridViewCellStyle1
-        Me.DataGrid.Location = New System.Drawing.Point(0, 0)
-        Me.DataGrid.Name = "DataGrid"
-        Me.DataGrid.RowHeadersVisible = False
-        Me.DataGrid.ScrollBars = System.Windows.Forms.ScrollBars.None
-        Me.DataGrid.Size = New System.Drawing.Size(357, 236)
-        Me.DataGrid.TabIndex = 3
-        Me.DataGrid.TabStop = False
+        Me.DgvNetwork.DefaultCellStyle = DataGridViewCellStyle1
+        Me.DgvNetwork.Location = New System.Drawing.Point(0, 0)
+        Me.DgvNetwork.Name = "DgvNetwork"
+        Me.DgvNetwork.RowHeadersVisible = False
+        Me.DgvNetwork.ScrollBars = System.Windows.Forms.ScrollBars.None
+        Me.DgvNetwork.Size = New System.Drawing.Size(357, 236)
+        Me.DgvNetwork.TabIndex = 3
+        Me.DgvNetwork.TabStop = False
         '
         'Column1
         '
@@ -90,17 +90,17 @@ Partial Class FrmNutWatcher
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(357, 236)
-        Me.Controls.Add(Me.DataGrid)
+        Me.Controls.Add(Me.DgvNetwork)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.MaximizeBox = False
         Me.Name = "FrmNutWatcher"
         Me.Text = "Darren's NutWatcher"
-        CType(Me.DataGrid, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DgvNetwork, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
     Friend WithEvents tmrUpdate As Timer
-    Friend WithEvents DataGrid As DataGridView
+    Friend WithEvents DgvNetwork As DataGridView
     Friend WithEvents Column1 As DataGridViewTextBoxColumn
     Friend WithEvents Column2 As DataGridViewTextBoxColumn
     Friend WithEvents Column3 As DataGridViewTextBoxColumn
