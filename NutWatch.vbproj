@@ -6,9 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{DD8C8C1A-B4AC-4551-A5DF-E544BC5E381D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>NutWatcher.My.MyApplication</StartupObject>
-    <RootNamespace>NutWatcher</RootNamespace>
-    <AssemblyName>NutWatcher</AssemblyName>
+    <StartupObject>NutWatch.My.MyApplication</StartupObject>
+    <RootNamespace>NutWatch</RootNamespace>
+    <AssemblyName>NutWatch</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -22,7 +22,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>NutWatcher.xml</DocumentationFile>
+    <DocumentationFile>NutWatch.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -32,7 +32,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>NutWatcher.xml</DocumentationFile>
+    <DocumentationFile>NutWatch.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -73,11 +73,11 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="frmNutWatcher.vb">
+    <Compile Include="frmNutWatch.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmNutWatcher.Designer.vb">
-      <DependentUpon>frmNutWatcher.vb</DependentUpon>
+    <Compile Include="frmNutWatch.Designer.vb">
+      <DependentUpon>frmNutWatch.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -97,8 +97,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="frmNutWatcher.resx">
-      <DependentUpon>frmNutWatcher.vb</DependentUpon>
+    <EmbeddedResource Include="frmNutWatch.resx">
+      <DependentUpon>frmNutWatch.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>

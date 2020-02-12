@@ -1,10 +1,10 @@
-﻿Public Class FrmNutWatcher
+﻿Public Class FrmNutWatch
 
     '===================================================================================================================
     ' DECLARATIONS!
     '===================================================================================================================
 
-    Public programFullNameAndVersion = "NutWatcher v0.80"
+    Public programVersion = "v0.81"
     Public programMajorVersionReleaseDate = "2020-01-11"
     Public myLongIntervalSecs = 30 ' s
     Public myTimeoutMs = 2000 ' ms
@@ -88,7 +88,7 @@
     '===================================================================================================================
 
     Private Sub FrmNutMonitor_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.Text = "Darren's " & programFullNameAndVersion
+        Me.Text = "Darren's NutWatch " & programVersion
 
         Dim myfileName As String = Dir(defaultFile)
         'Dim myFile As IO.FileStream
@@ -148,7 +148,6 @@
 
     Public Sub ReadData()
         Dim textDump() As String = IO.File.ReadAllLines(defaultFile)
-        Dim iInt As Integer
         Me.Height = 43 ' 32 + 11
         DgvNetwork.Height = 11 ' 0 + 11
         For Each iStr As String In textDump

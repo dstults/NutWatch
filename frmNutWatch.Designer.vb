@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class FrmNutWatcher
+Partial Class FrmNutWatch
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -85,7 +85,7 @@ Partial Class FrmNutWatcher
         Me.Column3.Name = "Column3"
         Me.Column3.ReadOnly = True
         '
-        'FrmNutWatcher
+        'FrmNutWatch
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -93,8 +93,8 @@ Partial Class FrmNutWatcher
         Me.Controls.Add(Me.DgvNetwork)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.MaximizeBox = False
-        Me.Name = "FrmNutWatcher"
-        Me.Text = "Darren's NutWatcher"
+        Me.Name = "FrmNutWatch"
+        Me.Text = "Darren's NutWatch"
         CType(Me.DgvNetwork, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
